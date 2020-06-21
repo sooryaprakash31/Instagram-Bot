@@ -18,18 +18,23 @@ class InstagramBot:
           self.driver = webdriver.Chrome(options=self.options,executable_path = "/usr/lib/chromium-browser/chromedriver")
           self.driver.get("https://www.instagram.com/accounts/login/")
           sleep(1)
-
+          #username and password
           self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[2]/div/label/input')[0].send_keys(self.username)
           sleep(1)
           self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[3]/div/label/input')[0].send_keys(self.password)
           sleep(2)
+          #log in button
           self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[4]/button')[0].click()
           sleep(2)
-          #self.driver.find_elements_by_xpath('/html/body/div[4]/div/div/div/div[3]/button[2]').click()
+          
+          #Profile page to skip all the unwanted dialogs
           self.driver.get("https://www.instagram.com/{}/".format(self.username))
           sleep(2)
+          
+          #settings in profile
           self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/div[1]/div[1]/button')[0].click()
           sleep(3)
+          #Log out
           self.driver.find_elements_by_xpath('/html/body/div[4]/div/div/div/div/button[9]')[0].click()
           sleep(5)
           self.driver.quit()
