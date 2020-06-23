@@ -24,7 +24,7 @@ class InstagramBot:
           #login
           self.login()
           #following the suggested accounts in main page
-          self.follow_suggested(2)
+          self.follow_suggested()
           #To log out
           self.logout()
      
@@ -38,6 +38,7 @@ class InstagramBot:
           while unfollowing:    
                following_count=int(self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span')[0].text)
                print("count",following_count)
+               #following count button
                self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a')[0].click()
                sleep(2)
                following_list=self.driver.find_elements_by_xpath("//button[text()='{}']".format("Following"))
@@ -67,22 +68,25 @@ class InstagramBot:
           self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[4]/button')[0].click()
           
      @operation
-     def follow_suggested(self,count=None):
+     def follow_suggested(self):
           self.driver.get("https://www.instagram.com/")
-          #see all button in suggested for you
-          self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/section/div[3]/div[2]/div[1]/a')[0].click()
-          sleep(2)
-          #getting the suggesstions list
-          suggested_accounts_list = self.driver.find_elements_by_xpath("//*[text()='{}']".format("Follow"))
-          if count is None:
+          count=25
+          while count>0:
+               #see all button in suggested for you
+               self.driver.find_elements_by_xpath("//div[text()='{}']".format("See All"))[0].click()
+               #self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/section/div[3]/div[2]/div[1]/a')[0].click()
+               sleep(2)
                for i in range(5):
-                    suggested_accounts_list[i].click()
-                    sleep(1)
-          else:
-               for i in range(count):
-                    suggested_accounts_list[i].click()
-                    sleep(1)
-
+                    self.follow(i)
+                    count = count-1
+               sleep(random.randint(2,6))
+               self.driver.refresh()
+               
+     @operation
+     def follow(self,position):
+          #Follow button
+          self.driver.find_elements_by_xpath("//*[text()='{}']".format("Follow"))[int(position)].click()
+          
      @operation
      def unfollow(self,account):
           account.click()
