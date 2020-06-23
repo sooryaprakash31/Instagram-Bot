@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from time import sleep
 import os
+import random
 from configparser import ConfigParser
 from utils.utils import *
 username=""
@@ -24,6 +25,33 @@ class InstagramBot:
           self.login()
           #following the suggested accounts in main page
           self.follow_suggested(2)
+          #To log out
+          self.logout()
+     
+     @operation
+     def unfollowAll(self):
+          #login
+          self.login()
+          self.driver.get("https://www.instagram.com/{}/".format(username))
+          sleep(3)
+          unfollowing = True
+          while unfollowing:    
+               following_count=int(self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span')[0].text)
+               print("count",following_count)
+               self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a')[0].click()
+               sleep(2)
+               following_list=self.driver.find_elements_by_xpath("//button[text()='{}']".format("Following"))
+               print(len(following_list))
+               if following_count<5:            
+                    for i in range(following_count):
+                         self.unfollow(following_list[i])
+                         unfollowing = False     
+               else:
+                    for i in range(5):
+                         self.unfollow(following_list[i])
+                    sleep(random.randint(2,6))
+                    self.driver.refresh()
+          sleep(2)
           #To log out
           self.logout()
 
@@ -54,6 +82,13 @@ class InstagramBot:
                for i in range(count):
                     suggested_accounts_list[i].click()
                     sleep(1)
+
+     @operation
+     def unfollow(self,account):
+          account.click()
+          sleep(1)
+          self.driver.find_elements_by_xpath("//button[text()='{}']".format("Unfollow"))[0].click()
+
      @operation
      def logout(self):
           self.driver.get("https://www.instagram.com/{}/".format(username))
@@ -73,15 +108,21 @@ def get_credentials():
      password = config.get('AUTH', 'PASSWORD')
 
 def auto_pilot():
+     get_credentials()
      bot=InstagramBot()
      bot.autoPilot()
-     
+
+def unfollow_all():
+     get_credentials()
+     bot=InstagramBot()
+     bot.unfollowAll()     
 if __name__ == '__main__':
 
-     choice = int(input("Select Mode \n 1 - Auto Pilot\n 2 - Follow\n 3 - Like\n 4 - Comment\n 5 - Download Media\n"))
+     choice = int(input("Select Mode \n 1 - Auto Pilot\n 2 - Follow\n 3 - Unfollow\n 4 - Comment\n 5 - Download Media\n"))
      mode={
           1:auto_pilot,
+          3:unfollow_all,
      }  
-     #mode[choice]()
-     get_credentials()
-     auto_pilot()
+     mode[choice]()
+     #get_credentials()
+     #auto_pilot()
