@@ -24,19 +24,25 @@ class InstagramBot:
           #login
           self.login()
           #following the suggested accounts in main page
-          self.follow_suggested()
+          #self.follow_suggested()
+          self.unfollowAll()
           #To log out
           self.logout()
      
      @operation
      def unfollowAll(self):
           #login
-          self.login()
+          #self.login()
+          #user profile page
           self.driver.get("https://www.instagram.com/{}/".format(username))
           sleep(3)
           unfollowing = True
-          while unfollowing:    
-               following_count=int(self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span')[0].text)
+          while unfollowing:
+               numbers=self.driver.find_elements_by_class_name("g47SY ")
+               posts_count=int(numbers[0])
+               followers_count=int(numbers[1])
+               following_count = int(numbers[2])
+               #following_count=int(self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span')[0].text)
                print("count",following_count)
                #following count button
                self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a')[0].click()
@@ -60,12 +66,12 @@ class InstagramBot:
      def login(self):
           global username,password
           #input username and password
-          self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[2]/div/label/input')[0].send_keys(username)
+          self.driver.find_element_by_name('username').send_keys(username)
           sleep(1)
-          self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[3]/div/label/input')[0].send_keys(password)
+          self.driver.find_element_by_name('password').send_keys(password)
           sleep(2)
           #log in button
-          self.driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[4]/button')[0].click()
+          self.driver.find_element_by_xpath("//div[text()='{}']".format("Log In")).click()
           
      @operation
      def follow_suggested(self):
